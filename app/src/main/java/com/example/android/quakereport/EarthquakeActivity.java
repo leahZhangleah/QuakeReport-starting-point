@@ -33,12 +33,30 @@ public class EarthquakeActivity extends AppCompatActivity {
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     ArrayList<OneEarthquake> earthquakes = new ArrayList<OneEarthquake>();
     String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
-
+    EarthquakeArrayAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        // Find a reference to the {@link ListView} in the layout
+        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
+                String url = earthquakes.get(position).getUrl();
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+
+        // Create a new {@link ArrayAdapter} of earthquakes
+        adapter = new EarthquakeArrayAdapter(getApplicationContext(),earthquakes);
+
+        // Set the adapter on the {@link ListView}
+        // so the list can be populated in the user interface
+        earthquakeListView.setAdapter(adapter);
         new EarthquakeTask().execute(url);
     }
 
@@ -57,24 +75,11 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final ArrayList<OneEarthquake> oneEarthquakes) {
-            // Find a reference to the {@link ListView} in the layout
-            ListView earthquakeListView = (ListView) findViewById(R.id.list);
-            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
-                    String url = oneEarthquakes.get(position).getUrl();
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(url));
-                    startActivity(i);
-                }
-            });
+            adapter.clear();
+            if (oneEarthquakes != null && !oneEarthquakes.isEmpty()){
+                adapter.addAll(oneEarthquakes);
+            }
 
-            // Create a new {@link ArrayAdapter} of earthquakes
-            EarthquakeArrayAdapter adapter = new EarthquakeArrayAdapter(getApplicationContext(),oneEarthquakes);
-
-            // Set the adapter on the {@link ListView}
-            // so the list can be populated in the user interface
-            earthquakeListView.setAdapter(adapter);
         }
     }
 }

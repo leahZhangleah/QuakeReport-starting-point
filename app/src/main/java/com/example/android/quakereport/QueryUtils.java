@@ -14,10 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 public class QueryUtils {
     /** Sample JSON response for a USGS query */
@@ -85,26 +83,19 @@ public class QueryUtils {
     }
 
     @Nullable
-    private static String convertFromStream(InputStream is){
-        if (is == null) {
-            Log.i("QUERYUTILS", is + " is null");
-            return null;
-        }
+    private static String convertFromStream(InputStream is) throws IOException{
         StringBuilder output = new StringBuilder();
-        InputStreamReader reader = new InputStreamReader(is);
-        BufferedReader buffer = new BufferedReader(reader);
-        try {
+        if (is != null) {
+            InputStreamReader reader = new InputStreamReader(is, Charset.defaultCharset());
+            BufferedReader buffer = new BufferedReader(reader);
             String line = buffer.readLine();
             while (line != null) {
                 output.append(line).append("\n");
-                buffer.readLine();
+                line = buffer.readLine();
             }
-        } catch (IOException e) {
-            Log.e("QUERYUTILS", "error reading from buffer");
         }
         return output.toString();
     }
-
 
     private static ArrayList<OneEarthquake> extractEarthquakes(String jsonResponse){
         if (jsonResponse == null) {
@@ -139,6 +130,8 @@ public class QueryUtils {
         }
         return urlToRequest;
     }
+
+
 }
 
 

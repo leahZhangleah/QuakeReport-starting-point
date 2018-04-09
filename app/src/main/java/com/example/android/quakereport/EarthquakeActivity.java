@@ -39,6 +39,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private static final int EARTHQUAKE_LOADER_ID = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(LOG_TAG,LOG_TAG + "is being created now");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
@@ -62,17 +63,21 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         earthquakeListView.setAdapter(adapter);
        // new EarthquakeTask().execute(url);
         getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID,null,this);
+        Log.i(LOG_TAG,"I am initLoader method");
     }
 
     @Override
     public Loader<ArrayList<OneEarthquake>> onCreateLoader(int i, Bundle bundle) {
+        Log.i(LOG_TAG,"I am oncreateloader method");
         return new EarthquakeLoader(this,url);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<OneEarthquake>> loader, ArrayList<OneEarthquake> oneEarthquakes) {
         adapter.clear();
+        Log.i(LOG_TAG,"adapter's data is cleared");
         if (oneEarthquakes != null && !oneEarthquakes.isEmpty()){
+            Log.i(LOG_TAG,"I am onloadfinished method");
             adapter.addAll(oneEarthquakes);
         }
 
@@ -81,6 +86,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoaderReset(Loader<ArrayList<OneEarthquake>> loader) {
         adapter.clear();
+        Log.i(LOG_TAG,"adapter's data is reset");
     }
 
     /*

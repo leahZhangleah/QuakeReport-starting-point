@@ -33,6 +33,12 @@ public class QueryUtils {
     private QueryUtils(){}
     private static final String LOG_TAG = QueryUtils.class.getName();
     public static ArrayList<OneEarthquake> fetchEarthquakeData(String url){
+        try{
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
         Log.i(LOG_TAG,"I am the real background method");
         URL urlToRequest = createUrl(url);
         String jsonToParse = null;
